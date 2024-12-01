@@ -7,7 +7,8 @@ Implement the simpliest solution possible with minimum code/dependencies.
 
 ## Intuition
 
-1. **Possibility of applying discounts are the features; not the main functionality.**
+1. At first I thought (and implemented) receiving List of UUIDs, rather than 1 product but with amount. Updated in next commit.
+2. **Assumption we can apply only one of the discounts at the same time.**
 
 2. **Prices for products:**  
    I didn't want to setup whole DB, run some liquibase scripts to setup initial data.  

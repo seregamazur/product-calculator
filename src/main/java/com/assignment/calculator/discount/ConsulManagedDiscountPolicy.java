@@ -2,6 +2,7 @@ package com.assignment.calculator.discount;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,16 +26,23 @@ public class ConsulManagedDiscountPolicy {
     @Value("#{${policies.discount.percentage-based}}")
     private TreeMap<Integer, BigDecimal> percentageBasedDiscountPolicy = new TreeMap<>();
 
-    public BigDecimal getAmountBasedDiscount(int size) {
-        return amountBasedDiscountPolicy.isEmpty()
-            ? new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
-            : amountBasedDiscountPolicy.floorEntry(size).getValue().setScale(2, RoundingMode.HALF_UP);
+    public BigDecimal getAmountBasedDiscount(int amount) {
+        return findApplicableDiscount(amount, amountBasedDiscountPolicy);
     }
 
-    public BigDecimal getPercentageBasedDiscount(int size) {
-        return percentageBasedDiscountPolicy.isEmpty()
-            ? new BigDecimal(0).setScale(2, RoundingMode.HALF_UP)
-            : percentageBasedDiscountPolicy.floorEntry(size).getValue().setScale(2, RoundingMode.HALF_UP);
+    public BigDecimal getPercentageBasedDiscount(int amount) {
+        return findApplicableDiscount(amount, percentageBasedDiscountPolicy);
+    }
+
+    private BigDecimal findApplicableDiscount(int amount, TreeMap<Integer, BigDecimal> discountPolicy) {
+        if (discountPolicy.isEmpty()) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+
+        Map.Entry<Integer, BigDecimal> entry = discountPolicy.floorEntry(amount);
+        return entry == null
+            ? BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)
+            : entry.getValue().setScale(2, RoundingMode.HALF_UP);
     }
 
 }
